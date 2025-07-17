@@ -3,10 +3,15 @@
   hosts: all
   gather_facts: no
   tasks:
-    - name: Get timezone
-      command: timedatectl | grep "Time zone"
+    - name: Get current timezone using timedatectl --no-pager
+      shell: timedatectl --no-pager
       register: timezone_output
+
+    - name: Extract timezone from timedatectl output
+      set_fact:
+        timezone_line: "{{ timezone_output.stdout_lines | select('search', '^Time zone:') | list | first }}"
+        timezone: "{{ timezone_line.split()[2] }}"
 
     - name: Show timezone
       debug:
-        msg: "{{ timezone_output.stdout }}"
+        msg: "Timezone is {{ timezone }}"
