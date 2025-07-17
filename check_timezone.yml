@@ -1,0 +1,12 @@
+---
+- name: Check Timezone of Servers
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Get timezone
+      command: timedatectl | grep "Time zone"
+      register: timezone_output
+
+    - name: Show timezone
+      debug:
+        msg: "{{ timezone_output.stdout }}"
